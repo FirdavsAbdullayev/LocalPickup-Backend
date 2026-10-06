@@ -1,6 +1,8 @@
 const express = require('express');
 const oc = require('../../controllers/orderController');
 const { protect, requireRole } = require('../../middlewares/auth');
+const validate = require('../../middlewares/validate');
+const { createOrderSchema } = require('../../config/validations');
 const router = express.Router();
 
 /**
@@ -42,7 +44,7 @@ router.use(protect);
  *       201:
  *         description: Order placed successfully
  */
-router.post('/', requireRole('CUSTOMER', 'SUPER_ADMIN'), oc.createOrder);
+router.post('/', requireRole('CUSTOMER', 'SUPER_ADMIN'), validate(createOrderSchema), oc.createOrder);
 
 /**
  * @swagger

@@ -27,6 +27,3 @@ exports.requireRole = (...roles) => (req, res, next) => {
   }
   next();
 };
-
-// Backward compat alias
-exports.restrictTo = exports.requireRole;

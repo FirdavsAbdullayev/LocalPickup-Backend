@@ -61,7 +61,7 @@ exports.createShop = catchAsync(async (req, res, next) => {
   const slug = slugify(name) + '-' + Date.now();
   const shop = await Shop.create({
     ownerId: req.user.id, name, slug, description, phone, address, latitude, longitude, logo,
-    isApproved: true,
+    isApproved: false,
   });
   res.status(201).json({ status: 'success', data: { shop } });
 });

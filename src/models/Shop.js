@@ -12,7 +12,7 @@ const Shop = sequelize.define('Shop', {
   address: { type: DataTypes.STRING, allowNull: true },
   latitude: { type: DataTypes.FLOAT, allowNull: true },
   longitude: { type: DataTypes.FLOAT, allowNull: true },
-  isApproved: { type: DataTypes.BOOLEAN, defaultValue: true },
+  isApproved: { type: DataTypes.BOOLEAN, defaultValue: false },
 }, { timestamps: true });
 
 module.exports = Shop;

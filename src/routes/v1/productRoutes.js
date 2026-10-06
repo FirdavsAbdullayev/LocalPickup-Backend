@@ -1,6 +1,8 @@
 const express = require('express');
 const pc = require('../../controllers/productController');
 const { protect, requireRole } = require('../../middlewares/auth');
+const validate = require('../../middlewares/validate');
+const { createProductSchema } = require('../../config/validations');
 const router = express.Router();
 
 /**
@@ -146,7 +148,7 @@ router.get('/:id', pc.getProductById);
  *       201:
  *         description: Product created
  */
-router.post('/', protect, requireRole('VENDOR', 'SUPER_ADMIN'), pc.createProduct);
+router.post('/', protect, requireRole('VENDOR', 'SUPER_ADMIN'), validate(createProductSchema), pc.createProduct);
 
 /**
  * @swagger

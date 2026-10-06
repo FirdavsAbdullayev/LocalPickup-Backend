@@ -1,6 +1,8 @@
 const express = require('express');
 const sc = require('../../controllers/shopController');
 const { protect, requireRole } = require('../../middlewares/auth');
+const validate = require('../../middlewares/validate');
+const { createShopSchema } = require('../../config/validations');
 const router = express.Router();
 
 /**
@@ -100,7 +102,7 @@ router.get('/:id', sc.getShopById);
  *       201:
  *         description: Shop created
  */
-router.post('/', protect, requireRole('VENDOR', 'SUPER_ADMIN'), sc.createShop);
+router.post('/', protect, requireRole('VENDOR', 'SUPER_ADMIN'), validate(createShopSchema), sc.createShop);
 
 /**
  * @swagger
