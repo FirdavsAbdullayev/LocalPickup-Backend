@@ -1,47 +1,38 @@
 const express = require('express');
 const cors = require('cors');
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpecs = require('./config/swagger');
-const globalErrorHandler = require('./middlewares/error');
-const AppError = require('./utils/AppError');
 
 const app = express();
 
-// ─── CORS Sozlamasi (To'g'rilangan) ──────────────────────────────────────────
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
-  : true; // 'true' kelayotgan har qanday origin'ni dynamic ko'chiradi va credentials bilan muammosiz ishlaydi
+// 1. CORS - har qanday domen so'rovini to'g'ri qabul qilish va credentials xatosini oldini olish
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
-app.use(cors({
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
-
-// ─── Body Parsers ─────────────────────────────────────────────────────────────
-app.use(express.json({ limit: '10mb' }));
+// 2. Body parser middleware
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ─── Health Check ─────────────────────────────────────────────────────────────
-app.get('/health', (req, res) => res.status(200).json({ status: 'ok', timestamp: new Date() }));
+// 3. Health check yo'nalishi (Railway va monitoring uchun)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'Server is running smoothly' });
+});
 
-// ─── API Docs ─────────────────────────────────────────────────────────────────
-app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+// 4. Asosiy API yo'nalishlarini (routes) shu yerdan uling:
+// const mainRouter = require('./routes');
+// app.use('/api/v1', mainRouter);
 
-// ─── Routes ──────────────────────────────────────────────────────────────────
-app.use('/api/v1/users',     require('./routes/v1/userRoutes'));
-app.use('/api/v1/shops',     require('./routes/v1/shopRoutes'));
-app.use('/api/v1/products',  require('./routes/v1/productRoutes'));
-app.use('/api/v1/orders',    require('./routes/v1/orderRoutes'));
-app.use('/api/v1/cart',      require('./routes/v1/cartRoutes'));
-app.use('/api/v1/favorites', require('./routes/v1/favoriteRoutes'));
-app.use('/api/v1/admin',     require('./routes/v1/adminRoutes'));
-
-// ─── 404 Handler ─────────────────────────────────────────────────────────────
-app.use((req, res, next) => next(new AppError(`Route ${req.originalUrl} not found.`, 404)));
-
-// ─── Global Error Handler ─────────────────────────────────────────────────────
-app.use(globalErrorHandler);
+// 5. Global xatoliklarni ushlab qoluvchi middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err.stack);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal Server Error',
+  });
+});
 
 module.exports = app;
