@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 
+// 1. Asosiy router yoki individual routerlarni import qilish
+const mainRouter = require('./routes'); // Loyihangizdagi routes papkasining yo'li
+
 const app = express();
 
-// 1. CORS - har qanday domen so'rovini to'g'ri qabul qilish va credentials xatosini oldini olish
+// 2. CORS middleware - har qanday originga ruxsat va credentials
 app.use(
   cors({
     origin: true,
@@ -13,20 +16,27 @@ app.use(
   })
 );
 
-// 2. Body parser middleware
+// 3. Body parser middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 3. Health check yo'nalishi (Railway va monitoring uchun)
+// 4. Health check yo'nalishi (Server ishlayotganini tekshirish uchun)
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Server is running smoothly' });
 });
 
-// 4. Asosiy API yo'nalishlarini (routes) shu yerdan uling:
-// const mainRouter = require('./routes');
-// app.use('/api/v1', mainRouter);
+// 5. Asosiy API routerini ulash (IZOH OCHILDI!)
+app.use('/api/v1', mainRouter);
 
-// 5. Global xatoliklarni ushlab qoluvchi middleware
+// 6. Mavjud bo'lmagan yo'llar uchun 404 middleware
+app.use((req, res, next) => {
+  res.status(404).json({
+    success: false,
+    message: `Not Found - ${req.originalUrl}`,
+  });
+});
+
+// 7. Global xatoliklarni ushlab qoluvchi middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
   res.status(err.status || 500).json({
