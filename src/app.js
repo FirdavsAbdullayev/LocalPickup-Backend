@@ -7,10 +7,10 @@ const AppError = require('./utils/AppError');
 
 const app = express();
 
-// ─── CORS ────────────────────────────────────────────────────────────────────
+// ─── CORS Sozlamasi (To'g'rilangan) ──────────────────────────────────────────
 const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',')
-  : '*';
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+  : true; // 'true' kelayotgan har qanday origin'ni dynamic ko'chiradi va credentials bilan muammosiz ishlaydi
 
 app.use(cors({
   origin: allowedOrigins,
@@ -38,11 +38,10 @@ app.use('/api/v1/cart',      require('./routes/v1/cartRoutes'));
 app.use('/api/v1/favorites', require('./routes/v1/favoriteRoutes'));
 app.use('/api/v1/admin',     require('./routes/v1/adminRoutes'));
 
-// ─── 404 ─────────────────────────────────────────────────────────────────────
+// ─── 404 Handler ─────────────────────────────────────────────────────────────
 app.use((req, res, next) => next(new AppError(`Route ${req.originalUrl} not found.`, 404)));
 
 // ─── Global Error Handler ─────────────────────────────────────────────────────
 app.use(globalErrorHandler);
 
 module.exports = app;
-
