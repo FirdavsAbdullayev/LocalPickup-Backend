@@ -5,21 +5,19 @@ const { sequelize } = require('./models');
 
 const PORT = process.env.PORT || 5000;
 
-// Connect to Database and Sync Models
 const startServer = async () => {
   await connectDB();
-  
-  // Sync all defined models to the DB
   try {
-    await sequelize.sync({ alter: true }); // Use alter to update tables to match models
-    console.log('All models were synchronized successfully.');
+    await sequelize.sync({ alter: true });
+    console.log('✅ All models synchronized (alter: true).');
   } catch (error) {
-    console.error('An error occurred while synchronizing the models:', error);
+    console.error('❌ Model sync error:', error);
+    process.exit(1);
   }
-
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log(`Swagger Docs available at http://localhost:${PORT}/api/v1/docs`);
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📖 Swagger Docs: http://localhost:${PORT}/api/v1/docs`);
+    console.log(`🏥 Health: http://localhost:${PORT}/health`);
   });
 };
 

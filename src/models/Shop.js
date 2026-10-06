@@ -1,55 +1,18 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
-const User = require('./User');
 
 const Shop = sequelize.define('Shop', {
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true,
-  },
-  owner_id: {
-    type: DataTypes.UUID,
-    allowNull: false,
-    references: {
-      model: User,
-      key: 'id'
-    }
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  slug: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  description: {
-    type: DataTypes.TEXT,
-  },
-  phone: {
-    type: DataTypes.STRING,
-  },
-  address: {
-    type: DataTypes.STRING,
-  },
-  location_lat: {
-    type: DataTypes.FLOAT,
-  },
-  location_lng: {
-    type: DataTypes.FLOAT,
-  },
-  isVerified: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  }
-}, {
-  timestamps: true,
-});
-
-// Relationships
-User.hasMany(Shop, { foreignKey: 'owner_id' });
-Shop.belongsTo(User, { foreignKey: 'owner_id', as: 'owner' });
+  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  ownerId: { type: DataTypes.UUID, allowNull: false },
+  name: { type: DataTypes.STRING, allowNull: false },
+  slug: { type: DataTypes.STRING, unique: true },
+  description: { type: DataTypes.TEXT, allowNull: true },
+  logo: { type: DataTypes.STRING, allowNull: true },
+  phone: { type: DataTypes.STRING, allowNull: true },
+  address: { type: DataTypes.STRING, allowNull: true },
+  latitude: { type: DataTypes.FLOAT, allowNull: true },
+  longitude: { type: DataTypes.FLOAT, allowNull: true },
+  isApproved: { type: DataTypes.BOOLEAN, defaultValue: true },
+}, { timestamps: true });
 
 module.exports = Shop;

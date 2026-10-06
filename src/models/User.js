@@ -2,49 +2,24 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 
 const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true,
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true,
-    },
-  },
-  phone: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  fullName: { type: DataTypes.STRING, allowNull: false },
+  email: { type: DataTypes.STRING, allowNull: false, unique: true, validate: { isEmail: true } },
+  phone: { type: DataTypes.STRING, allowNull: true },
+  password: { type: DataTypes.STRING, allowNull: false },
   role: {
-    type: DataTypes.ENUM('super_admin', 'shop_owner', 'customer'),
-    defaultValue: 'customer',
+    type: DataTypes.ENUM('SUPER_ADMIN', 'VENDOR', 'CUSTOMER'),
+    defaultValue: 'CUSTOMER',
   },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  status: {
+    type: DataTypes.ENUM('ACTIVE', 'BLOCKED'),
+    defaultValue: 'ACTIVE',
   },
-  isActive: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true,
-  },
+  telegramChatId: { type: DataTypes.STRING, allowNull: true },
 }, {
   timestamps: true,
-  defaultScope: {
-    attributes: { exclude: ['password'] }
-  },
-  scopes: {
-    withPassword: {
-      attributes: { include: ['password'] }
-    }
-  }
+  defaultScope: { attributes: { exclude: ['password'] } },
+  scopes: { withPassword: { attributes: {} } },
 });
 
 module.exports = User;
