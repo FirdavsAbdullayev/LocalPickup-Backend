@@ -6,7 +6,10 @@ const { sequelize, User, Category, Shop, Product } = require('./models');
 const seedData = async () => {
   try {
     await connectDB();
-    await sequelize.sync({ alter: true });
+    // Sxema migratsiyalar orqali boshqariladi. Dev'da (NP) mavjud emas bo'lsa sync qiladi.
+    if (process.env.NODE_ENV !== 'production') {
+      await sequelize.sync();
+    }
 
     console.log('🌱 Seeding platform data...');
 

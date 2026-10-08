@@ -10,9 +10,14 @@ const startServer = async () => {
     // 1. Ma'lumotlar bazasiga ulanish
     await connectDB();
 
-    // 2. Modellarni ma'lumotlar bazasi bilan sinxronizatsiya qilish
-    await sequelize.sync({ alter: true });
-    console.log('✅ All models synchronized (alter: true).');
+    // 2. Sxema: production'da migratsiyalar (sequelize-cli db:migrate),
+    //    development'da qulaylik uchun lightweight sync
+    if (process.env.NODE_ENV === 'production') {
+      console.log('ℹ️ Schema managed by migrations. Run `npm run migrate` before start.');
+    } else {
+      await sequelize.sync();
+      console.log('✅ Dev schema synchronized.');
+    }
 
     // 3. Railway va bulutli muhitlar uchun '0.0.0.0' hamda dinamik PORT bilan eshitish
     app.listen(PORT, '0.0.0.0', () => {

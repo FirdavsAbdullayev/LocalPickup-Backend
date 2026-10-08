@@ -14,6 +14,8 @@ const Order = sequelize.define('Order', {
     defaultValue: 'UNPAID',
   },
   totalAmount: { type: DataTypes.DECIMAL(15, 2), allowNull: false },
+  // Platforma komissiyasi (commissionRate asosida hisoblanadi)
+  commissionAmount: { type: DataTypes.DECIMAL(15, 2), allowNull: true },
   pickupTime: { type: DataTypes.DATE, allowNull: true },
   notes: { type: DataTypes.TEXT, allowNull: true },
 }, { timestamps: true });

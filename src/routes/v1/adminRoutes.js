@@ -152,4 +152,83 @@ router.patch('/shops/:id/approve', ac.approveShop);
  */
 router.delete('/shops/:id', ac.rejectShop);
 
+/**
+ * @swagger
+ * /admin/shops/{id}/featured:
+ *   patch:
+ *     summary: Toggle featured (Reklama) status for a shop
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [featured]
+ *             properties:
+ *               featured: { type: boolean }
+ *               days: { type: integer, description: "Qancha kunga (default 30)" }
+ *     responses:
+ *       200:
+ *         description: Shop featured status updated
+ */
+router.patch('/shops/:id/featured', ac.setShopFeatured);
+
+/**
+ * @swagger
+ * /admin/shops/{id}/plan:
+ *   patch:
+ *     summary: Set SaaS subscription plan (FREE/PRO/PREMIUM)
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [plan]
+ *             properties:
+ *               plan: { type: string, enum: [FREE, PRO, PREMIUM] }
+ *     responses:
+ *       200:
+ *         description: Shop plan updated
+ */
+router.patch('/shops/:id/plan', ac.setShopPlan);
+
+/**
+ * @swagger
+ * /admin/shops/{id}/commission:
+ *   patch:
+ *     summary: Update per-shop transaction commission rate
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [commissionRate]
+ *             properties:
+ *               commissionRate: { type: number, description: "0.02 = 2%, max 0.25" }
+ *     responses:
+ *       200:
+ *         description: Shop commission rate updated
+ */
+router.patch('/shops/:id/commission', ac.setShopCommission);
+
 module.exports = router;

@@ -49,6 +49,9 @@ exports.getProductById = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success', data: { product } });
 });
 
+// SaaS plan bo'yicha mahsulot limiti (null = cheksiz)
+const PLAN_LIMITS = { FREE: 15, PRO: 200, PREMIUM: null };
+
 exports.createProduct = catchAsync(async (req, res, next) => {
   const { shopId, categoryId, title, description, price, discountPrice, image, stockQuantity } = req.body;
   if (!shopId || !title || !price) return next(new AppError('shopId, title and price are required.', 400));
@@ -56,6 +59,19 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   const where = req.user.role === 'SUPER_ADMIN' ? { id: shopId } : { id: shopId, ownerId: req.user.id };
   const shop = await Shop.findOne({ where });
   if (!shop) return next(new AppError('Shop not found or you are not the owner.', 403));
+
+  const limit = PLAN_LIMITS[shop.plan];
+  if (limit != null) {
+    const count = await Product.count({ where: { shopId: shop.id } });
+    if (count >= limit) {
+      return next(
+        new AppError(
+          `Do'koningiz ${shop.plan} tarifida maksimal ${limit} ta mahsulot qo'yish mumkin. PRO tarifiga o'ting.`,
+          400
+        )
+      );
+    }
+  }
 
   let catId = categoryId;
   if (!catId) {

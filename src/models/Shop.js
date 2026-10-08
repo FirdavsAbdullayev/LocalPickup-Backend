@@ -13,6 +13,16 @@ const Shop = sequelize.define('Shop', {
   latitude: { type: DataTypes.FLOAT, allowNull: true },
   longitude: { type: DataTypes.FLOAT, allowNull: true },
   isApproved: { type: DataTypes.BOOLEAN, defaultValue: false },
+
+  // ─── Monetizatsiya ──────────────────────────────────────────────────────
+  isFeatured: { type: DataTypes.BOOLEAN, defaultValue: false },
+  featuredUntil: { type: DataTypes.DATE, allowNull: true },
+  plan: {
+    type: DataTypes.ENUM('FREE', 'PRO', 'PREMIUM'),
+    defaultValue: 'FREE',
+  },
+  // Do'kon uchun tranzaksiya komissiyasi (0.02 = 2%)
+  commissionRate: { type: DataTypes.FLOAT, defaultValue: 0.03 },
 }, { timestamps: true });
 
 module.exports = Shop;
